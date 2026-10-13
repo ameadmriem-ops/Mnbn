@@ -125,13 +125,6 @@ class MainActivity : ComponentActivity() {
 
     fun setInputFocusedFromJs(isFocused: Boolean) {
         isInputFocusedInWebView = isFocused
-        if (!isFocused && !isKeyboardActive) {
-            mainHandler.postDelayed({
-                if (!isInputFocusedInWebView && !isKeyboardActive) {
-                    applyImmersiveFullScreen()
-                }
-            }, 500)
-        }
     }
 
     // Native Media3 ExoPlayer components
@@ -266,9 +259,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus && !isInputFocusedInWebView && !isKeyboardActive) {
-            applyImmersiveFullScreen()
-        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -431,14 +421,8 @@ class MainActivity : ComponentActivity() {
             setBackgroundColor(Color.BLACK)
             isFocusable = true
             isFocusableInTouchMode = true
-            setOnTouchListener { v, _ ->
-                if (!v.hasFocus()) {
-                    v.requestFocus()
-                }
-                false
-            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_YES
+                importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
             }
             settings.apply {
                 javaScriptEnabled = true
@@ -1214,9 +1198,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (!isInputFocusedInWebView && !isKeyboardActive) {
-            applyImmersiveFullScreen()
-        }
         if (playerContainer.visibility == View.VISIBLE) {
             val isLandscape = newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE
             val density = resources.displayMetrics.density

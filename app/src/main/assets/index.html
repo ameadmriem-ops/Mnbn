@@ -2773,15 +2773,15 @@ body.light-mode .account-stat-val {
       <div id="authAlertBox" class="auth-alert-box"></div>
 
       <!-- Form: Login -->
-      <form id="formAuthLogin" onsubmit="handleAuthLoginSubmit(event)" style="display:block">
+      <form id="formAuthLogin" onsubmit="handleAuthLoginSubmit(event)" autocomplete="off" style="display:block">
         <div class="auth-form-group">
           <label class="auth-form-label">البريد الإلكتروني</label>
-          <input type="email" id="loginEmailInput" name="email" class="auth-input-modern" placeholder="name@example.com" required autocomplete="username email" dir="ltr" style="text-align:right" spellcheck="false">
+          <input type="email" id="loginEmailInput" name="login_email" class="auth-input-modern" placeholder="name@example.com" required autocomplete="off" autocorrect="off" autocapitalize="off" data-lpignore="true" dir="ltr" style="text-align:right" spellcheck="false">
         </div>
         <div class="auth-form-group">
           <label class="auth-form-label">كلمة المرور</label>
           <div class="auth-input-field-wrap">
-            <input type="password" id="loginPassInput" name="password" class="auth-input-modern" placeholder="••••••••" required autocomplete="current-password" dir="ltr" style="text-align:right" spellcheck="false">
+            <input type="password" id="loginPassInput" name="login_password" class="auth-input-modern" placeholder="••••••••" required autocomplete="off" autocorrect="off" autocapitalize="off" data-lpignore="true" data-form-type="other" dir="ltr" style="text-align:right" spellcheck="false">
             <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('loginPassInput', this)">👁️</button>
           </div>
           <div style="text-align:left">
@@ -2794,26 +2794,26 @@ body.light-mode .account-stat-val {
       </form>
 
       <!-- Form: Register -->
-      <form id="formAuthRegister" onsubmit="handleAuthRegisterSubmit(event)" style="display:none">
+      <form id="formAuthRegister" onsubmit="handleAuthRegisterSubmit(event)" autocomplete="off" style="display:none">
         <div class="auth-form-group">
           <label class="auth-form-label">الاسم الكامل</label>
-          <input type="text" id="regNameInput" name="name" class="auth-input-modern" placeholder="اسمك الكريم" required autocomplete="name" spellcheck="false">
+          <input type="text" id="regNameInput" name="reg_name" class="auth-input-modern" placeholder="اسمك الكريم" required autocomplete="off" autocorrect="off" autocapitalize="words" data-lpignore="true" spellcheck="false">
         </div>
         <div class="auth-form-group">
           <label class="auth-form-label">البريد الإلكتروني</label>
-          <input type="email" id="regEmailInput" name="email" class="auth-input-modern" placeholder="name@example.com" required autocomplete="email" dir="ltr" style="text-align:right" spellcheck="false">
+          <input type="email" id="regEmailInput" name="reg_email" class="auth-input-modern" placeholder="name@example.com" required autocomplete="off" autocorrect="off" autocapitalize="off" data-lpignore="true" dir="ltr" style="text-align:right" spellcheck="false">
         </div>
         <div class="auth-form-group">
           <label class="auth-form-label">كلمة المرور (6 أحرف أو أكثر)</label>
           <div class="auth-input-field-wrap">
-            <input type="password" id="regPassInput" name="new-password" class="auth-input-modern" placeholder="••••••••" required autocomplete="new-password" minlength="6" dir="ltr" style="text-align:right" spellcheck="false">
+            <input type="password" id="regPassInput" name="reg_password" class="auth-input-modern" placeholder="••••••••" required autocomplete="off" autocorrect="off" autocapitalize="off" data-lpignore="true" data-form-type="other" minlength="6" dir="ltr" style="text-align:right" spellcheck="false">
             <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('regPassInput', this)">👁️</button>
           </div>
         </div>
         <div class="auth-form-group">
           <label class="auth-form-label">تأكيد كلمة المرور</label>
           <div class="auth-input-field-wrap">
-            <input type="password" id="regPassConfirmInput" name="confirm-password" class="auth-input-modern" placeholder="••••••••" required autocomplete="new-password" minlength="6" dir="ltr" style="text-align:right" spellcheck="false">
+            <input type="password" id="regPassConfirmInput" name="reg_confirm_password" class="auth-input-modern" placeholder="••••••••" required autocomplete="off" autocorrect="off" autocapitalize="off" data-lpignore="true" data-form-type="other" minlength="6" dir="ltr" style="text-align:right" spellcheck="false">
             <button type="button" class="auth-eye-btn" onclick="togglePasswordVisibility('regPassConfirmInput', this)">👁️</button>
           </div>
         </div>
@@ -2823,13 +2823,13 @@ body.light-mode .account-stat-val {
       </form>
 
       <!-- Form: Password Reset -->
-      <form id="formAuthReset" onsubmit="handleAuthResetSubmit(event)" style="display:none">
+      <form id="formAuthReset" onsubmit="handleAuthResetSubmit(event)" autocomplete="off" style="display:none">
         <p style="font-size:12.5px;color:#aaa;margin-bottom:14px;line-height:1.5">
           أدخل بريدك الإلكتروني وسنرسل لك رابطاً عبر Firebase لإعادة تعيين كلمة المرور فوراً.
         </p>
         <div class="auth-form-group">
           <label class="auth-form-label">البريد الإلكتروني</label>
-          <input type="email" id="resetEmailInput" name="email" class="auth-input-modern" placeholder="name@example.com" required autocomplete="email" dir="ltr" style="text-align:right" spellcheck="false">
+          <input type="email" id="resetEmailInput" name="reset_email" class="auth-input-modern" placeholder="name@example.com" required autocomplete="off" autocorrect="off" autocapitalize="off" data-lpignore="true" dir="ltr" style="text-align:right" spellcheck="false">
         </div>
         <button type="submit" id="btnResetSubmit" class="auth-btn-primary">
           <span id="btnResetText">إرسال رابط استعادة كلمة المرور</span>
@@ -5265,6 +5265,8 @@ window.openAuthModal = function(defaultTab = "login") {
   if (overlay) {
     overlay.classList.add("active");
     window.isAuthModalOpen = true;
+    window._isAnyInputActiveFlag = true;
+    notifyNativeInputFocusState(true);
     switchAuthTab(defaultTab);
     clearAuthAlert();
   }
@@ -5275,6 +5277,8 @@ window.closeAuthModal = function() {
   if (overlay) {
     overlay.classList.remove("active");
     window.isAuthModalOpen = false;
+    window._isAnyInputActiveFlag = false;
+    notifyNativeInputFocusState(false);
     clearAuthAlert();
   }
 };
@@ -5291,6 +5295,7 @@ window._isAnyInputActiveFlag = false;
 window._pendingPageReRenderOnBlur = false;
 
 window.isTypingOrInputActive = function() {
+  if (window.isAuthModalOpen) return true;
   const active = document.activeElement;
   if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.tagName === "SELECT" || active.isContentEditable)) {
     return true;
@@ -5335,10 +5340,13 @@ document.addEventListener("focusin", function(e) {
 }, true);
 
 document.addEventListener("focusout", function(e) {
+  if (window.isAuthModalOpen) {
+    return;
+  }
   if (nativeInputFocusTimer) clearTimeout(nativeInputFocusTimer);
   nativeInputFocusTimer = setTimeout(function() {
     const isInput = window.isTypingOrInputActive();
-    if (!isInput) {
+    if (!isInput && !window.isAuthModalOpen) {
       window._isAnyInputActiveFlag = false;
       notifyNativeInputFocusState(false);
       if (window._pendingPageReRenderOnBlur) {
@@ -5348,7 +5356,7 @@ document.addEventListener("focusout", function(e) {
         }
       }
     }
-  }, 600);
+  }, 1000);
 }, true);
 
 window.switchAuthTab = function(tab) {
