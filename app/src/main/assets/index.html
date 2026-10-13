@@ -3336,6 +3336,7 @@ const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 const colRef=collection(db,"movies");
 const auth = getAuth(app);
+auth.languageCode = "ar";
 window.firebaseAuth = auth;
 window.currentAuthUser = null;
 window.currentAdminClaim = false;
@@ -5441,8 +5442,9 @@ function mapAuthErrorCodeToArabic(err) {
     case "auth/invalid-email":
       return "صيغة البريد الإلكتروني غير صالحة.";
     case "auth/user-not-found":
+      return "هذا البريد الإلكتروني غير مسجل في التطبيق. يرجى التأكد من كتابة البريد بشكل صحيح أو إنشاء حساب جديد.";
     case "auth/wrong-password":
-      return "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+      return "كلمة المرور غير صحيحة. يرجى التأكد والمحاولة مجدداً.";
     case "auth/invalid-credential":
       return "بيانات الاعتماد غير صالحة أو منتهية الصلاحية (Invalid Credential).";
     case "auth/email-already-in-use":
@@ -5609,10 +5611,39 @@ window.onNativeGoogleSignInFailure = function(errorMsg) {
   showAuthAlert(errorMsg || "تعذر إكمال تسجيل الدخول عبر Google.");
 };
 
+async function checkFirebaseUserExists(email) {
+  const apiKey = "AIzaSyB_9ZOotR4uZtYYn08OSIZXJczM-WC0MM8";
+  try {
+    const res = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, password: "PreCheckTempPwd#998877!", returnSecureToken: true })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      if (data?.error?.message === "EMAIL_EXISTS") {
+        return true;
+      }
+      return null;
+    }
+    if (data.idToken) {
+      fetch(`https://identitytoolkit.googleapis.com/v1/accounts:delete?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken: data.idToken })
+      }).catch(() => {});
+    }
+    return false;
+  } catch (e) {
+    return null;
+  }
+}
+
 window.handleAuthResetSubmit = async function(e) {
   e.preventDefault();
   clearAuthAlert();
-  const email = (document.getElementById("resetEmailInput")?.value || "").trim();
+  const emailInput = document.getElementById("resetEmailInput");
+  const email = (emailInput?.value || "").trim();
   const btn = document.getElementById("btnResetSubmit");
   const btnText = document.getElementById("btnResetText");
 
@@ -5621,12 +5652,33 @@ window.handleAuthResetSubmit = async function(e) {
     return;
   }
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showAuthAlert("يرجى إدخال عنوان بريد إلكتروني صحيح (مثال: name@gmail.com).");
+    return;
+  }
+
+  if (!navigator.onLine) {
+    showAuthAlert("تعذر الاتصال بالإنترنت. يرجى التحقق من اتصال الشبكة والمحاولة مجدداً.");
+    return;
+  }
+
   if (btn) btn.disabled = true;
-  if (btnText) btnText.textContent = "جاري الإرسال...";
+  if (btnText) btnText.textContent = "جاري التحقق والإرسال...";
 
   try {
+    if (auth) {
+      auth.languageCode = "ar";
+    }
+
+    const exists = await checkFirebaseUserExists(email);
+    if (exists === false) {
+      showAuthAlert("عذراً، هذا البريد الإلكتروني غير مسجل في التطبيق! يرجى التأكد من كتابة البريد بشكل صحيح أو إنشاء حساب جديد عبر تبويب «إنشاء حساب».");
+      return;
+    }
+
     await sendPasswordResetEmail(auth, email);
-    showAuthAlert("تم إرسال رابط استعادة كلمة المرور بنجاح إلى بريدك الإلكتروني! يرجى مراجعة صندوق الوارد.", true);
+    showAuthAlert("تم إرسال رابط استعادة كلمة المرور بنجاح إلى: " + email + ".\nيرجى فتح بريدك الإلكتروني والضغط على الرابط لتعيين كلمة مرور جديدة (تأكد أيضاً من فحص مجلد الرسائل غير المرغوب فيها Spam).", true);
   } catch (err) {
     console.error("Password reset error:", err);
     showAuthAlert(mapAuthErrorCodeToArabic(err));
@@ -5874,8 +5926,9 @@ window.handleSendPasswordResetFromAccount = async function() {
   if (!user || !user.email) return;
   if (confirm(`هل تريد إرسال رابط إعادة تعيين كلمة المرور إلى ${user.email}؟`)) {
     try {
+      if (auth) auth.languageCode = "ar";
       await sendPasswordResetEmail(auth, user.email);
-      alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني بنجاح!");
+      alert(`تم إرسال رابط إعادة تعيين كلمة المرور إلى ${user.email} بنجاح!\nيرجى مراجعة صندوق الوارد ومجلد الرسائل غير المرغوب فيها (Spam).`);
     } catch (e) {
       alert("فشل الإرسال: " + mapAuthErrorCodeToArabic(e));
     }
